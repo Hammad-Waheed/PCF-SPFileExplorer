@@ -515,6 +515,11 @@ const mockFullFileExplorerProps: IFullFileExplorerProps = {
       mockFullFileExplorerProps.currentFolderPath
     );
   },
+  refreshCallback: () => {
+  // mock or empty implementation for now
+  console.log('refreshCallback called');
+},
+
 };
 
 /**

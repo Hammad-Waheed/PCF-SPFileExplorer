@@ -49,8 +49,11 @@ export class SPFileExplorer implements ComponentFramework.StandardControl<IInput
             context.parameters.documentsDataSet.paging.setPageSize(ALL_ITEMS_PAGE_SIZE);
             context.parameters.documentsDataSet.paging.loadNextPage();
         } else {
+             const refreshCallback = () => {
+          context.parameters.documentsDataSet.refresh(); // 🔄 Refresh logic here
+        };
             const explorerProperties = this._isSandbox()? initMockFullFileExplorerProps(()=>this.updateView(context))
-            : initFullFileExplorerProps(context, this._controlCache);
+            : initFullFileExplorerProps(context, this._controlCache, refreshCallback);
 
             ReactDOM.render(React.createElement(FullFileExplorer,
                 explorerProperties 

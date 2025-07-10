@@ -41,6 +41,10 @@ export interface IFullFileExplorerProps {
    */
   hideFoldersPane?: boolean;
   /**
+   * List of command bar actions that should be visible.
+   */
+  visibleCommandBarActions: string[];
+  /**
    * Relative location path of the currently selected folder.
    */
   currentFolderPath: string;
@@ -77,4 +81,5 @@ export interface IFullFileExplorerProps {
    * @param ascending Indicates if the records should be sorted ascending.
    */
   setSorting: (column: string, ascending: boolean) => void;
+  refreshCallback: () => void;
 }

@@ -6,6 +6,9 @@ import { IFullFileExplorerProps } from "./IFullFileExplorerProps";
 
 export const ALL_ITEMS_PAGE_SIZE = 5000;
 
+// Add visible command bar actions constant
+export const DEFAULT_COMMAND_BAR_ACTIONS = ["New", "Upload", "Refresh", "AddLocation", "OpenInSharePoint", "Download", "Delete", "Share"];
+
 const SHARED_LOCATION_GUID = "17DE0DBB-153C-4C1A-B98A-223B3EA10125";
 const FOLDER_STRUCTURE_KEY = "FolderStructure";
 
@@ -174,9 +177,17 @@ const refreshSubfoldersRecursive = (
  */
 export const initFullFileExplorerProps = (
   context: ComponentFramework.Context<IInputs>,
-  controlCache: { [index: string]: any }
+  controlCache: { [index: string]: any },
+  refreshCallback: () => void  
 ): IFullFileExplorerProps => {
   const dataSet = context.parameters.documentsDataSet;
+  console.log(dataSet);
+  
+  // Get visible actions from property
+  const visibleActions = context.parameters.visibleCommandBarActions?.raw
+    ? context.parameters.visibleCommandBarActions.raw.split(",").map(a => a.trim())
+    : DEFAULT_COMMAND_BAR_ACTIONS;
+
   let folderStructure = controlCache[FOLDER_STRUCTURE_KEY] as IFolder;
 
   const sortExpression =
@@ -240,6 +251,7 @@ export const initFullFileExplorerProps = (
     hideFoldersPane: context.parameters.hideFoldersPane
       ? context.parameters.hideFoldersPane.raw
       : false,
+    visibleCommandBarActions: visibleActions,
     columns: dataSet.columns
       .filter((c) => !c.isHidden)
       .map((c) => {
@@ -351,5 +363,6 @@ export const initFullFileExplorerProps = (
       dataSet.refresh();
     },
     currentFolderPath,
+  refreshCallback: refreshCallback
   };
 };

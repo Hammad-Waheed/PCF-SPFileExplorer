@@ -8,7 +8,7 @@
       <LocalizedName description="PCFSPFileExplorer" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0</Version>
+    <Version>1.0.0.21</Version>
     <!-- Solution Package Type: Unmanaged(0)/Managed(1)/Both(2)-->
     <Managed>2</Managed>
     <Publisher>
@@ -16,11 +16,11 @@
       <UniqueName>TechAssistEnterprises</UniqueName>
       <LocalizedNames>
         <!-- Localized Cds Publisher Name in language code-->
-        <LocalizedName description="TechAssistEnterprises" languagecode="1033" />
+        <LocalizedName description="Tech Assist Enterprises" languagecode="1033" />
       </LocalizedNames>
       <Descriptions>
         <!-- Description of Cds Publisher in language code -->
-        <Description description="TechAssistEnterprises" languagecode="1033" />
+        <Description description="Tech Assist Enterprises" languagecode="1033" />
       </Descriptions>
       <EMailAddress xsi:nil="true"></EMailAddress>
       <SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>

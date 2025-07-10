@@ -381,8 +381,109 @@ const FullFileExplorer = (props: IFullFileExplorerProps) => {
     });
   };
 
+const uploadDocument = async (file: File) => {
+  const context =  Xrm.Page; // fallback for classic clients
+  const entityName = context.data.entity.getEntityName(); // dynamically get entity
+  const entityId = context.data.entity.getId().replace(/[{}]/g, "");
+
+  const reader = new FileReader();
+
+  setControlState({
+    ...controlState,
+    loading: true,
+  });
+
+  return new Promise<void>((resolve, reject) => {
+    reader.onload = async () => {
+      const base64Content = (reader.result as string).split(",")[1];
+
+      const payload = {
+        Content: base64Content,
+        Entity: {
+          "@odata.type": "Microsoft.Dynamics.CRM.sharepointdocument",
+          locationid: "",
+          title: file.name
+        },
+        FolderPath: "",
+        OverwriteExisting: true,
+        ParentEntityReference: {
+          "@odata.type": `Microsoft.Dynamics.CRM.${entityName}`,
+          [`${entityName}id`]: entityId
+        }
+      };
+
+      try {
+        const baseUrl = Xrm.Utility.getGlobalContext().getClientUrl(); // ✅ get base URL
+        const apiUrl = `${baseUrl}/api/data/v9.0/UploadDocument`; // ✅ no hardcoded URL
+
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "OData-MaxVersion": "4.0",
+            "OData-Version": "4.0",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          reject(new Error(err));
+        } else {
+          resolve();
+        }
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
   return (
-    <div className="spFileExplorer">
+    <div className="spFileExplorer"
+   
+    onDragOver={(e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }}
+    onDrop={async (e) => {
+  e.preventDefault();
+   const MAX_SIZE_MB = 50;
+  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+  const files = Array.from(e.dataTransfer.files);
+  if (files.length === 0) return;
+
+  // const file = files[0]; // assuming single file upload for now
+for (const file of files) {
+   if (file.size > MAX_SIZE_BYTES) {
+       await Xrm.Navigation.openAlertDialog({
+        confirmButtonLabel: "OK",
+        text: "Maximum upload limit in Dynamics 365 is 50.00 MB. Larger files can be uploaded directly in SharePoint.",
+        title: "Upload Limit Exceeded"
+      }, {
+        height: 200,
+        width: 400
+      });
+      continue;
+    }
+
+  try {
+    await uploadDocument(file);
+
+  } catch (err) {
+    console.error("Upload failed", err);
+  }
+}
+ props.refreshCallback();
+setControlState({
+      ...controlState,
+      loading: false,
+    });
+}}
+    >
       {controlState.loading && (
         <div className="loadingContainer">
           <Spinner
